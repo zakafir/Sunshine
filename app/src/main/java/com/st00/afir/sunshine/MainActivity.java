@@ -3,6 +3,8 @@ package com.st00.afir.sunshine;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -10,17 +12,20 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.st00.afir.sunshine.utilities.ForecastAdapter;
 import com.st00.afir.sunshine.utilities.NetworkUtils;
 
 import java.net.URL;
 
 public class MainActivity extends AppCompatActivity {
 
-    private TextView mWeatherTextView;
+    private RecyclerView mRecyclerView;
+    private ForecastAdapter mForecastAdapter;
+
 
     private TextView mErrorMessageTextView;
 
-    private ProgressBar mProgessBar;
+    private ProgressBar mLoadingIndicator;
 
     private EditText mSearchBoxEditText;
 
@@ -29,36 +34,44 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mWeatherTextView = (TextView) findViewById(R.id.tv_weather_data);
+        mRecyclerView = (RecyclerView) findViewById(R.id.recyclerview_forecast);
 
         mErrorMessageTextView = (TextView) findViewById(R.id.error_msg);
 
-        mProgessBar = (ProgressBar) findViewById(R.id.pb_fetching);
 
         mSearchBoxEditText = (EditText) findViewById(R.id.et_search_box);
+
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+        mRecyclerView.setLayoutManager(layoutManager);
+
+        mRecyclerView.setHasFixedSize(true);
+        mForecastAdapter = new ForecastAdapter();
+        mRecyclerView.setAdapter(mForecastAdapter);
+        mLoadingIndicator = (ProgressBar) findViewById(R.id.pb_fetching);
+        loadWeatherData();
+
 
     }
 
 
-
     private void loadWeatherData() {
-        if(mSearchBoxEditText.getText() != null && !mSearchBoxEditText.getText().toString().equals("")){
+        if (mSearchBoxEditText.getText() != null && !mSearchBoxEditText.getText().toString().equals("")) {
             URL buildUrl = NetworkUtils.buildUrl(mSearchBoxEditText.getText().toString());
             showWeatherDataView();
             new FetchWeatherTask().execute(buildUrl);
-            mWeatherTextView.setText("");
-        }else{
+//            mWeatherTextView.setText("");
+        } else {
             showWeatherDataView();
         }
     }
 
-    private void showWeatherDataView(){
+    private void showWeatherDataView() {
         mErrorMessageTextView.setVisibility(View.INVISIBLE);
-        mWeatherTextView.setVisibility(View.VISIBLE);
+        mRecyclerView.setVisibility(View.VISIBLE);
     }
 
-    private void showErrorMessage(){
-        mWeatherTextView.setVisibility(View.INVISIBLE);
+    private void showErrorMessage() {
+        mRecyclerView.setVisibility(View.INVISIBLE);
         mErrorMessageTextView.setVisibility(View.VISIBLE);
     }
 
@@ -66,7 +79,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected void onPreExecute() {
-            mProgessBar.setVisibility(View.VISIBLE);
+            mLoadingIndicator.setVisibility(View.VISIBLE);
             super.onPreExecute();
         }
 
@@ -96,14 +109,11 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(String[] weatherData) {
-            mProgessBar.setVisibility(View.INVISIBLE);
+            mLoadingIndicator.setVisibility(View.INVISIBLE);
             if (weatherData != null) {
-                mWeatherTextView.setVisibility(View.VISIBLE);
-                for(String dayWeather: weatherData){
-                    mWeatherTextView.append((dayWeather)+"\n\n\n");
-                }
-
-            }else {
+                showWeatherDataView();
+                mForecastAdapter.setWeatherData(weatherData);
+            } else {
                 showErrorMessage();
             }
         }
@@ -119,7 +129,7 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
-        switch (id){
+        switch (id) {
             case R.id.action_search:
                 loadWeatherData();
                 return true;
