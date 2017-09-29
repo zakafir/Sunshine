@@ -62,7 +62,7 @@ public class MainActivity extends AppCompatActivity {
         mErrorMessageTextView.setVisibility(View.VISIBLE);
     }
 
-    public class FetchWeatherTask extends AsyncTask<URL, Void, String> {
+    public class FetchWeatherTask extends AsyncTask<URL, Void, String[]> {
 
         @Override
         protected void onPreExecute() {
@@ -71,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         @Override
-        protected String doInBackground(URL... params) {
+        protected String[] doInBackground(URL... params) {
 
             /* If there's no zip code, there's nothing to look up. */
             if (params.length == 0) {
@@ -84,7 +84,9 @@ public class MainActivity extends AppCompatActivity {
                 String jsonWeatherResponse = NetworkUtils
                         .getResponseFromHttpUrl(weatherRequestUrl);
 
-                return jsonWeatherResponse;
+                String[] allDaysForcastWeather = NetworkUtils.getSimpleWeatherStringsFromJson(jsonWeatherResponse);
+
+                return allDaysForcastWeather;
 
             } catch (Exception e) {
                 e.printStackTrace();
@@ -93,11 +95,13 @@ public class MainActivity extends AppCompatActivity {
         }
 
         @Override
-        protected void onPostExecute(String weatherData) {
+        protected void onPostExecute(String[] weatherData) {
             mProgessBar.setVisibility(View.INVISIBLE);
             if (weatherData != null) {
                 mWeatherTextView.setVisibility(View.VISIBLE);
-                mWeatherTextView.setText((weatherData));
+                for(String dayWeather: weatherData){
+                    mWeatherTextView.append((dayWeather)+"\n\n\n");
+                }
 
             }else {
                 showErrorMessage();
