@@ -1,6 +1,7 @@
 package com.st00.afir.sunshine;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -84,8 +85,8 @@ public class MainActivity extends AppCompatActivity implements ForecastAdapter.F
             mToast.cancel();
         }
         Context context = this;
-        mToast = Toast.makeText(context, weatherForDay, Toast.LENGTH_SHORT);
-        mToast.show();
+        Intent intent = new Intent(context,DetailActivity.class);
+        startActivity(intent);
     }
 
     public class FetchWeatherTask extends AsyncTask<URL, Void, String[]> {
