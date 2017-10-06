@@ -69,8 +69,7 @@ public class NetworkUtils {
             throws JSONException {
 
         final String OWM_LIST = "list";
-        final String OWM_MAX = "temp_max";
-        final String OWM_MIN = "temp_min";
+        final String OWM_TEMP = "temp";
         final String OWM_WEATHER = "weather";
         final String OWM_MAIN = "main";
         final String OWM_DESCRIPTION = "description";
@@ -107,9 +106,8 @@ public class NetworkUtils {
             JSONArray weather = dayForecast.optJSONArray(OWM_WEATHER);
             String description = weather.optJSONObject(0).optString(OWM_DESCRIPTION);
             JSONObject mainInfos = dayForecast.optJSONObject(OWM_MAIN);
-            int min = Math.round(Float.parseFloat(mainInfos.optString(OWM_MIN)) - 273.15F);
-            int max = Math.round(Float.parseFloat(mainInfos.getString(OWM_MAX)) - 273.15F);
-            parsedWeatherData[i] = date + " - " + description + " - " + min + "°C / " + max + "°C";
+            int temperature = Math.round(Float.parseFloat(mainInfos.optString(OWM_TEMP)) - 273.15F);
+            parsedWeatherData[i] = date + " ** " + description + " ** " + temperature + "°C";
         }
 
         return parsedWeatherData;
