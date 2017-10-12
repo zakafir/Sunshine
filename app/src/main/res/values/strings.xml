@@ -3,4 +3,5 @@
     <string name="refreshing_data">Refresh</string>
     <string name="msg_error">An Error was occurred</string>
     <string name="search">Search</string>
+    <string name="action_settings">Settings</string>
 </resources>
