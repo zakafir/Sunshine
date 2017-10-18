@@ -4,4 +4,14 @@
     <string name="msg_error">An Error was occurred</string>
     <string name="search">Search</string>
     <string name="action_settings">Settings</string>
+    <string name="title_location">Location</string>
+    <string name="key_location">location</string>
+    <string name="default_location">Marrakech</string>
+    <string name="pref_units_label">Temperature units</string>
+    <string name="pref_units_label_metric">Metric</string>
+    <string name="pref_units_label_imperial">Imperial</string>
+    <string name="pref_units_key" translatable="false">units</string>
+    <string name="pref_units_metric" translatable="false">metric</string>
+    <string name="pref_units_imperial" translatable="false">imperial</string>
+
 </resources>
